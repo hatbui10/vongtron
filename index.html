@@ -17,15 +17,23 @@ padding:20px;
 display:flex;
 gap:20px;
 align-items:flex-start;
+justify-content:center;
+flex-wrap:nowrap;
 }
+
 
 .tools{
 width:260px;
-background:white;
-padding:15px;
+padding:20px;
 border-radius:10px;
+margin: 10px auto;
+
+
+background:transparent;
 box-shadow:0 0 5px rgba(0,0,0,0.2);
 }
+
+
 
 .control{
 margin-bottom:12px;
@@ -91,233 +99,258 @@ cursor:crosshair;
 }
 
 
+.tools h3{
+width: 50%;
+background:linear-gradient(135deg,#444,#222);
+color:white;
+padding:12px;
+cursor:pointer;
+margin-bottom:20px;
+text-align:center;
+border-radius:8px;
+font-weight:bold;
+letter-spacing:0.5px;
+
+box-shadow:0 3px 8px rgba(0,0,0,0.3);
+
+transition:all 0.25s ease;
+}
+
+/* hover sáng lên */
+.tools h3:hover{
+background:linear-gradient(135deg,#666,#333);
+box-shadow:0 5px 14px rgba(0,0,0,0.45);
+transform:translateY(-2px);
+}
+
+/* khi bấm */
+.tools h3:active{
+transform:scale(0.97);
+box-shadow:0 2px 6px rgba(0,0,0,0.4);
+}
+
+.tools.collapsed .control,
+.tools.collapsed input,
+.tools.collapsed #dropBox,
+.tools.collapsed canvas,
+.tools.collapsed p{
+display:none;
+}
+
+
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<div class="tools">
-
-<h3>Chỉnh chữ</h3>
-
-<div class="control">
-Chữ phía trên
-<input id="topInput">
-</div>
-
-<div class="control">
-Chữ phía dưới
-<input id="bottomInput">
-</div>
-
-<div class="control">
-Bán kính vòng tròn
-<input type="range" id="radius" min="60" max="140" value="120">
-</div>
-
-<div class="control">
-Vị trí chữ trên
-<input type="range" id="topOffset" min="0" max="100" value="50">
-</div>
-
-<div class="control">
-Vị trí chữ dưới
-<input type="range" id="bottomOffset" min="0" max="100" value="50">
-</div>
-
-<div class="control">
-Khoảng cách chữ trên
-<input type="range" id="topGap" min="-30" max="40" value="10">
-</div>
-
-<div class="control">
-Khoảng cách chữ dưới
-<input type="range" id="bottomGap" min="-30" max="40" value="10">
-</div>
-
-<div class="control">
-Kích thước chữ
-<input type="range" id="fontSize" min="12" max="50" value="22">
-</div>
-
-<div class="control">
-Khoảng cách ký tự chữ trên
-<input type="range" id="topSpacing" min="0" max="15" value="4">
-</div>
+    <!-- PANEL TRÁI : CHỈNH CHỮ -->
+    <div class="panel tools collapsed">
+
+        <h3>Chỉnh chữ</h3>
+
+        <div class="control">
+            Chữ phía trên
+            <input id="topInput">
+        </div>
+
+        <div class="control">
+            Chữ phía dưới
+            <input id="bottomInput">
+        </div>
+
+        <div class="control">
+            Bán kính vòng tròn
+            <input type="range" id="radius" min="60" max="140" value="120">
+        </div>
+
+        <div class="control">
+            Vị trí chữ trên
+            <input type="range" id="topOffset" min="0" max="100" value="50">
+        </div>
+
+        <div class="control">
+            Vị trí chữ dưới
+            <input type="range" id="bottomOffset" min="0" max="100" value="50">
+        </div>
+
+        <div class="control">
+            Khoảng cách chữ trên
+            <input type="range" id="topGap" min="-30" max="40" value="10">
+        </div>
+
+        <div class="control">
+            Khoảng cách chữ dưới
+            <input type="range" id="bottomGap" min="-30" max="40" value="10">
+        </div>
+
+        <div class="control">
+            Kích thước chữ
+            <input type="range" id="fontSize" min="12" max="50" value="22">
+        </div>
 
-<div class="control">
-Khoảng cách ký tự chữ dưới
-<input type="range" id="bottomSpacing" min="0" max="15" value="4">
-</div>
+        <div class="control">
+            Khoảng cách ký tự chữ trên
+            <input type="range" id="topSpacing" min="0" max="15" value="4">
+        </div>
 
-</div>
+        <div class="control">
+            Khoảng cách ký tự chữ dưới
+            <input type="range" id="bottomSpacing" min="0" max="15" value="4">
+        </div>
 
-<div class="preview">
+    </div>
 
-<svg id="logoSVG" viewBox="0 0 300 300">
 
-<defs>
+    <!-- PREVIEW -->
+    <div class="preview">
 
-<path id="topCircle"></path>
-<path id="bottomCircle"></path>
+        <svg id="logoSVG" viewBox="0 0 300 300">
 
-<clipPath id="imageClip">
-<circle id="clipCircle" cx="150" cy="150" r="60"></circle>
-</clipPath>
+            <defs>
+                <path id="topCircle"></path>
+                <path id="bottomCircle"></path>
 
-</defs>
+                <clipPath id="imageClip">
+                    <circle id="clipCircle" cx="150" cy="150" r="60"></circle>
+                </clipPath>
+            </defs>
 
-<image id="centerImage"
-x="90"
-y="90"
-width="120"
-height="120"
-clip-path="url(#imageClip)"
-preserveAspectRatio="xMidYMid slice"
-href="">
-</image>
+            <image id="centerImage"
+                   x="90"
+                   y="90"
+                   width="120"
+                   height="120"
+                   clip-path="url(#imageClip)"
+                   preserveAspectRatio="xMidYMid slice">
+            </image>
 
-<circle id="imageBorder"
-cx="150"
-cy="150"
-r="60"
-fill="none"
-stroke="black"
-stroke-width="3"></circle>
+            <circle id="imageBorder"
+                    cx="150"
+                    cy="150"
+                    r="60"
+                    fill="none"
+                    stroke="black"
+                    stroke-width="3">
+            </circle>
 
-<text id="topTextWrap" font-size="22" font-weight="bold">
-<textPath id="topText"
-href="#topCircle"
-startOffset="50%"
-text-anchor="middle">
-CHỮ PHÍA TRÊN
-</textPath>
-</text>
+            <text id="topTextWrap" font-size="22" font-weight="bold">
+                <textPath id="topText" href="#topCircle" startOffset="50%" text-anchor="middle">
+                    CHỮ PHÍA TRÊN
+                </textPath>
+            </text>
 
-<text id="bottomTextWrap" font-size="22" font-weight="bold">
-<textPath id="bottomText"
-href="#bottomCircle"
-startOffset="50%"
-text-anchor="middle">
-CHỮ PHÍA DƯỚI
-</textPath>
-</text>
+            <text id="bottomTextWrap" font-size="22" font-weight="bold">
+                <textPath id="bottomText" href="#bottomCircle" startOffset="50%" text-anchor="middle">
+                    CHỮ PHÍA DƯỚI
+                </textPath>
+            </text>
 
-</svg>
+        </svg>
 
-<br>
-<button id="downloadBtn">Tải PNG</button>
+        <br>
+        <button id="downloadBtn">Tải PNG</button>
 
+        <hr style="margin:30px 0">
 
+        <h3>Bo tròn ảnh riêng</h3>
 
-<hr style="margin:30px 0">
+        <svg id="circleImageSVG" viewBox="0 0 300 300" width="300">
 
-<h3>Bo tròn ảnh riêng</h3>
+            <defs>
+                <clipPath id="circleClip">
+                    <circle id="circleClipShape" cx="150" cy="150" r="120"></circle>
+                </clipPath>
+            </defs>
 
-<svg id="circleImageSVG" viewBox="0 0 300 300" width="300">
+            <image id="circleImage"
+                   x="30"
+                   y="30"
+                   width="240"
+                   height="240"
+                   clip-path="url(#circleClip)"
+                   preserveAspectRatio="xMidYMid slice">
+            </image>
 
-<defs>
-<clipPath id="circleClip">
-<circle id="circleClipShape" cx="150" cy="150" r="120"></circle>
-</clipPath>
-</defs>
+        </svg>
 
-<image id="circleImage"
-x="30"
-y="30"
-width="240"
-height="240"
-clip-path="url(#circleClip)"
-preserveAspectRatio="xMidYMid slice"
-href="">
-</image>
+        <br>
 
-</svg>
+        <input type="file" id="circleUpload">
 
-<br>
+        <br>
 
-<input type="file" id="circleUpload">
+        Kích thước vòng tròn
 
-<br>
+        <input type="range" id="circleSize" min="60" max="140" value="120">
 
-Kích thước vòng tròn
+        <br><br>
 
-<input type="range" id="circleSize" min="60" max="140" value="120">
+        <button id="downloadCircle">Tải ảnh tròn PNG</button>
 
-<br><br>
+    </div>
 
-<button id="downloadCircle">Tải ảnh tròn PNG</button>
 
+    <!-- PANEL PHẢI : CHỈNH ẢNH -->
+    <div class="panel tools collapsed">
 
+        <h3>Chỉnh ảnh</h3>
 
+        <div class="control">
+            Thêm ảnh
+            <input type="file" id="imageUpload">
+        </div>
 
+        <div class="control">
+            Kích thước khung ảnh
+            <input type="range" id="imgSize" min="30" max="120" value="60">
+        </div>
 
-</div>
+        <div class="control">
+            Độ dày viền
+            <input type="range" id="borderSize" min="1" max="10" value="3">
+        </div>
 
-<div class="tools">
+        <div class="control">
+            HEX
+            <input type="text" id="hexInput">
+        </div>
 
-<h3>Chỉnh ảnh</h3>
+        <div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
 
-<div class="control">
-Thêm ảnh
-<input type="file" id="imageUpload">
-</div>
+        <canvas id="canvas"></canvas>
 
-<div class="control">
-Kích thước khung ảnh
-<input type="range" id="imgSize" min="30" max="120" value="60">
-</div>
+        <p id="colorInfo"></p>
 
-<div class="control">
-Độ dày viền
-<input type="range" id="borderSize" min="1" max="10" value="3">
-</div>
+        <div class="control">
+            Màu chữ
+            <input type="color" id="textColor" value="#000000">
+        </div>
 
+        <div class="control">
+            Màu viền
+            <input type="color" id="borderColor" value="#000000">
+        </div>
 
-HEX:
-<input type="text" id="hexInput">
+        <div class="control">
+            Màu nền
+            <input type="color" id="bgColor" value="#e6d39c">
+        </div>
 
-
-
-
-<div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
-
-<canvas id="canvas"></canvas>
-
-<p id="colorInfo"></p>
-
-
-
-
-<div class="control">
-Màu chữ
-<input type="color" id="textColor" value="#000000">
-</div>
-
-<div class="control">
-Màu viền
-<input type="color" id="borderColor" value="#000000">
-</div>
-
-<div class="control">
-Màu nền
-<input type="color" id="bgColor" value="#e6d39c">
-</div>
-
-
-
-
-
-
-
-
+    </div>
 
 </div>
-
-</div>
-
 <script>
+
+document.querySelectorAll(".tools h3").forEach(title=>{
+
+title.onclick=function(){
+
+this.parentElement.classList.toggle("collapsed")
+
+}
+
+})
 
 // tìm RBG 
 
