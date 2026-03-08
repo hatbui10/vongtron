@@ -47,8 +47,8 @@ margin-top:4px;
 }
 
 svg{
-width:420px;
-height:420px;
+width:1000px;
+height:1000px;
 background:#f4e2a3;
 border-radius:10px;
 box-shadow:0 0 8px rgba(0,0,0,0.3);
@@ -260,8 +260,17 @@ display:none;
 
             <defs>
                 <clipPath id="circleClip">
-                    <circle id="circleClipShape" cx="150" cy="150" r="120"></circle>
-                </clipPath>
+
+                <circle id="clipCircleShape" cx="150" cy="150" r="120"></circle>
+
+                <rect id="clipRectShape"
+                x="30"
+                y="30"
+                width="240"
+                height="240"
+                style="display:none"></rect>
+
+</clipPath>
             </defs>
 
             <image id="circleImage"
@@ -337,11 +346,79 @@ display:none;
             Màu nền
             <input type="color" id="bgColor" value="#e6d39c">
         </div>
-
+		
+		<div class="control">
+		Chiều rộng
+		<input type="number" id="frameWidth">
+		Chiều cao
+        <input type="number" id="frameHeight">
+                   <select id="frameType">
+                     <option value="rect">Rectangle</option>
+                     <option value="square">Square</option>
+                     <option value="circle">Circle</option>
+                   </select>
+				   
+				   <button id="applyFrame">Áp dụng khung</button>
+        </div>
+		
+		
     </div>
 
 </div>
 <script>
+
+const applyFrame = document.getElementById("applyFrame")
+
+const clipCircleShape = document.getElementById("clipCircleShape")
+const clipRectShape = document.getElementById("clipRectShape")
+
+applyFrame.onclick = function(){
+
+let width = frameWidth.value
+let height = frameHeight.value
+let type = frameType.value
+
+if(type === "circle"){
+
+clipCircleShape.style.display="block"
+clipRectShape.style.display="none"
+
+clipCircleShape.setAttribute("r", width/2)
+
+}
+
+if(type === "square"){
+
+clipCircleShape.style.display="none"
+clipRectShape.style.display="block"
+
+clipRectShape.setAttribute("width",width)
+clipRectShape.setAttribute("height",width)
+
+}
+
+if(type === "rect"){
+
+clipCircleShape.style.display="none"
+clipRectShape.style.display="block"
+
+clipRectShape.setAttribute("width",width)
+clipRectShape.setAttribute("height",height)
+
+}
+
+}
+
+
+const frameWidth = document.getElementById("frameWidth")
+const frameHeight = document.getElementById("frameHeight")
+const frameType = document.getElementById("frameType")
+
+let width = frameWidth.value
+let height = frameHeight.value
+let type = frameType.value
+
+
 
 document.querySelectorAll(".tools h3").forEach(title=>{
 
@@ -361,6 +438,37 @@ const ctx = canvas.getContext("2d")
 const colorInfo = document.getElementById("colorInfo")
 
 let img = new Image()
+
+
+//vẽ khung bên dưới
+function drawFrame(){
+
+let width = frameWidth.value
+let height = frameHeight.value
+let type = frameType.value
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+if(type === "rect"){
+ctx.strokeRect(20,20,width,height)
+}
+
+if(type === "square"){
+ctx.strokeRect(20,20,width,width)
+}
+
+if(type === "circle"){
+ctx.beginPath()
+ctx.arc(150,150,width/2,0,Math.PI*2)
+ctx.stroke()
+}
+
+}
+
+// sự kiện input
+frameWidth.addEventListener("input",drawFrame)
+frameHeight.addEventListener("input",drawFrame)
+frameType.addEventListener("change",drawFrame)
 
 // CTRL + V
 document.addEventListener("paste", function(e){
@@ -906,6 +1014,7 @@ updateImageSize()
 updateBorder()
 updateFont()
 updateColor()
+drawFrame()
 
 // đổi màu nền logo
 
