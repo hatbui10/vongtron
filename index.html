@@ -259,6 +259,13 @@ Màu viền
 <input type="color" id="borderColor" value="#000000">
 </div>
 
+<div class="control">
+Màu nền
+<input type="color" id="bgColor" value="#e6d39c">
+</div>
+
+
+
 </div>
 
 </div>
@@ -300,6 +307,7 @@ const centerImage=document.getElementById("centerImage")
 
 const clipCircle=document.getElementById("clipCircle")
 const imageBorder=document.getElementById("imageBorder")
+const bgColor = document.getElementById("bgColor")
 
 function updateCircle(){
 
@@ -405,8 +413,9 @@ canvas.height=800
 
 let ctx=canvas.getContext("2d")
 
-ctx.fillStyle="#e6d39c"
+ctx.fillStyle = bgColor.value
 ctx.fillRect(0,0,canvas.width,canvas.height)
+
 
 let img=new Image()
 
@@ -588,6 +597,11 @@ updateImageSize()
 updateBorder()
 updateFont()
 updateColor()
+bgColor.addEventListener("input",function(){
+
+document.getElementById("logoSVG").style.background = bgColor.value
+
+})
 
 </script>
 
