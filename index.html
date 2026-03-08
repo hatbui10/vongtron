@@ -58,16 +58,17 @@ cursor:pointer;
 margin-top:10px;
 }
 
-
 #circleImageSVG{
 cursor:grab;
-user-select:none;
 }
 
-
+#logoSVG{
+cursor:grab;
+}
 
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -89,16 +90,6 @@ Chữ phía dưới
 <div class="control">
 Bán kính vòng tròn
 <input type="range" id="radius" min="60" max="140" value="120">
-</div>
-
-<div class="control">
-Vị trí chữ trên
-<input type="range" id="topOffset" min="0" max="100" value="50">
-</div>
-
-<div class="control">
-Vị trí chữ dưới
-<input type="range" id="bottomOffset" min="0" max="100" value="50">
 </div>
 
 <div class="control">
@@ -162,19 +153,13 @@ stroke="black"
 stroke-width="3"></circle>
 
 <text id="topTextWrap" font-size="22" font-weight="bold">
-<textPath id="topText"
-href="#topCircle"
-startOffset="50%"
-text-anchor="middle">
+<textPath id="topText" href="#topCircle" startOffset="50%" text-anchor="middle">
 CHỮ PHÍA TRÊN
 </textPath>
 </text>
 
 <text id="bottomTextWrap" font-size="22" font-weight="bold">
-<textPath id="bottomText"
-href="#bottomCircle"
-startOffset="50%"
-text-anchor="middle">
+<textPath id="bottomText" href="#bottomCircle" startOffset="50%" text-anchor="middle">
 CHỮ PHÍA DƯỚI
 </textPath>
 </text>
@@ -182,9 +167,8 @@ CHỮ PHÍA DƯỚI
 </svg>
 
 <br>
+
 <button id="downloadBtn">Tải PNG</button>
-
-
 
 <hr style="margin:30px 0">
 
@@ -214,19 +198,9 @@ href="">
 
 <input type="file" id="circleUpload">
 
-<br>
-
-Kích thước vòng tròn
-
-<input type="range" id="circleSize" min="60" max="140" value="120">
-
 <br><br>
 
 <button id="downloadCircle">Tải ảnh tròn PNG</button>
-
-
-
-
 
 </div>
 
@@ -264,133 +238,108 @@ Màu nền
 <input type="color" id="bgColor" value="#e6d39c">
 </div>
 
-
-
 </div>
 
 </div>
 
 <script>
 
-const topInput=document.getElementById("topInput")
-const bottomInput=document.getElementById("bottomInput")
-
 const topText=document.getElementById("topText")
 const bottomText=document.getElementById("bottomText")
+
+const topInput=document.getElementById("topInput")
+const bottomInput=document.getElementById("bottomInput")
 
 const topWrap=document.getElementById("topTextWrap")
 const bottomWrap=document.getElementById("bottomTextWrap")
 
-const radiusSlider=document.getElementById("radius")
-const topOffsetSlider=document.getElementById("topOffset")
-const bottomOffsetSlider=document.getElementById("bottomOffset")
+const radius=document.getElementById("radius")
+const topGap=document.getElementById("topGap")
+const bottomGap=document.getElementById("bottomGap")
 
-const topGapSlider=document.getElementById("topGap")
-const bottomGapSlider=document.getElementById("bottomGap")
+const fontSize=document.getElementById("fontSize")
 
-const fontSizeSlider=document.getElementById("fontSize")
-
-const topSpacingSlider=document.getElementById("topSpacing")
-const bottomSpacingSlider=document.getElementById("bottomSpacing")
-
-const imgSizeSlider=document.getElementById("imgSize")
-const borderSizeSlider=document.getElementById("borderSize")
+const topSpacing=document.getElementById("topSpacing")
+const bottomSpacing=document.getElementById("bottomSpacing")
 
 const textColor=document.getElementById("textColor")
 const borderColor=document.getElementById("borderColor")
+const bgColor=document.getElementById("bgColor")
+
+const centerImage=document.getElementById("centerImage")
+const clipCircle=document.getElementById("clipCircle")
+const imageBorder=document.getElementById("imageBorder")
 
 const topCircle=document.getElementById("topCircle")
 const bottomCircle=document.getElementById("bottomCircle")
 
-const imageUpload=document.getElementById("imageUpload")
-const centerImage=document.getElementById("centerImage")
 
-const clipCircle=document.getElementById("clipCircle")
-const imageBorder=document.getElementById("imageBorder")
-const bgColor = document.getElementById("bgColor")
+
+const imgSizeSlider = document.getElementById("imgSize")
+
+imgSizeSlider.oninput = function(){
+
+let r = parseInt(imgSizeSlider.value)
+
+clipCircle.setAttribute("r", r)
+imageBorder.setAttribute("r", r)
+
+}
+
+
 
 function updateCircle(){
 
-let r=parseInt(radiusSlider.value)
-let topGap=parseInt(topGapSlider.value)
-let bottomGap=parseInt(bottomGapSlider.value)
+let r=parseInt(radius.value)
 
 topCircle.setAttribute(
 "d",
-`M150,150 m-${r+topGap},0 a${r+topGap},${r+topGap} 0 1,1 ${(r+topGap)*2},0`
+`M150,150 m-${r+parseInt(topGap.value)},0 a${r+parseInt(topGap.value)},${r+parseInt(topGap.value)} 0 1,1 ${(r+parseInt(topGap.value))*2},0`
 )
 
 bottomCircle.setAttribute(
 "d",
-`M150,150 m-${r+bottomGap},0 a${r+bottomGap},${r+bottomGap} 0 1,0 ${(r+bottomGap)*2},0`
+`M150,150 m-${r+parseInt(bottomGap.value)},0 a${r+parseInt(bottomGap.value)},${r+parseInt(bottomGap.value)} 0 1,0 ${(r+parseInt(bottomGap.value))*2},0`
 )
 
 }
 
-function updateFont(){
+radius.oninput=updateCircle
+topGap.oninput=updateCircle
+bottomGap.oninput=updateCircle
 
-let size=fontSizeSlider.value
+topInput.oninput=()=>topText.textContent=topInput.value
+bottomInput.oninput=()=>bottomText.textContent=bottomInput.value
 
-topWrap.setAttribute("font-size",size)
-bottomWrap.setAttribute("font-size",size)
-
-topWrap.setAttribute("letter-spacing",topSpacingSlider.value)
-bottomWrap.setAttribute("letter-spacing",bottomSpacingSlider.value)
-
+fontSize.oninput=function(){
+topWrap.setAttribute("font-size",fontSize.value)
+bottomWrap.setAttribute("font-size",fontSize.value)
 }
 
-function updateImageSize(){
-
-let size=imgSizeSlider.value
-
-clipCircle.setAttribute("r",size)
-imageBorder.setAttribute("r",size)
-
-centerImage.setAttribute("x",150-size)
-centerImage.setAttribute("y",150-size)
-
-centerImage.setAttribute("width",size*2)
-centerImage.setAttribute("height",size*2)
-
+topSpacing.oninput=function(){
+topWrap.setAttribute("letter-spacing",topSpacing.value)
 }
 
-function updateBorder(){
-imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
+bottomSpacing.oninput=function(){
+bottomWrap.setAttribute("letter-spacing",bottomSpacing.value)
 }
 
-function updateColor(){
-
+textColor.oninput=function(){
 topWrap.setAttribute("fill",textColor.value)
 bottomWrap.setAttribute("fill",textColor.value)
-
-imageBorder.setAttribute("stroke",borderColor.value)
-
 }
 
-topInput.addEventListener("input",()=>topText.textContent=topInput.value)
-bottomInput.addEventListener("input",()=>bottomText.textContent=bottomInput.value)
+borderColor.oninput=function(){
+imageBorder.setAttribute("stroke",borderColor.value)
+}
 
-topOffsetSlider.addEventListener("input",()=>topText.setAttribute("startOffset",topOffsetSlider.value+"%"))
-bottomOffsetSlider.addEventListener("input",()=>bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%"))
+bgColor.oninput=function(){
+document.getElementById("logoSVG").style.background=bgColor.value
+}
 
-radiusSlider.addEventListener("input",updateCircle)
-topGapSlider.addEventListener("input",updateCircle)
-bottomGapSlider.addEventListener("input",updateCircle)
-
-fontSizeSlider.addEventListener("input",updateFont)
-topSpacingSlider.addEventListener("input",updateFont)
-bottomSpacingSlider.addEventListener("input",updateFont)
-
-imgSizeSlider.addEventListener("input",updateImageSize)
-borderSizeSlider.addEventListener("input",updateBorder)
-
-textColor.addEventListener("input",updateColor)
-borderColor.addEventListener("input",updateColor)
-
-imageUpload.addEventListener("change",function(){
+document.getElementById("imageUpload").onchange=function(){
 
 const file=this.files[0]
-if(!file) return
 
 const reader=new FileReader()
 
@@ -400,32 +349,35 @@ centerImage.setAttribute("href",e.target.result)
 
 reader.readAsDataURL(file)
 
-})
+}
 
 document.getElementById("downloadBtn").onclick=function(){
 
-let svg=document.getElementById("logoSVG")
-let data=new XMLSerializer().serializeToString(svg)
+const svg=document.getElementById("logoSVG")
 
-let canvas=document.createElement("canvas")
-canvas.width=800
-canvas.height=800
+const data=new XMLSerializer().serializeToString(svg)
 
-let ctx=canvas.getContext("2d")
+const canvas=document.createElement("canvas")
 
-ctx.fillStyle = bgColor.value
-ctx.fillRect(0,0,canvas.width,canvas.height)
+canvas.width=2048
+canvas.height=2048
 
+const ctx=canvas.getContext("2d")
 
-let img=new Image()
+ctx.fillStyle=bgColor.value
+ctx.fillRect(0,0,2048,2048)
+
+const img=new Image()
 
 img.onload=function(){
 
-ctx.drawImage(img,0,0)
+ctx.drawImage(img,0,0,2048,2048)
 
-let a=document.createElement("a")
+const a=document.createElement("a")
+
 a.download="logo.png"
 a.href=canvas.toDataURL("image/png")
+
 a.click()
 
 }
@@ -434,172 +386,61 @@ img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 
 }
 
+updateCircle()
+/* ===== KÉO + ZOOM ẢNH ===== */
 
-
-const circleUpload = document.getElementById("circleUpload")
-const circleImage = document.getElementById("circleImage")
-const circleSizeSlider = document.getElementById("circleSize")
-const circleClipShape = document.getElementById("circleClipShape")
-
-let circleScale = 1
-let circleX = 30
-let circleY = 30
+let imgX = 90
+let imgY = 90
+let imgSize = 120
 
 let dragging = false
-let startX,startY
+let startX
+let startY
 
+const svg = document.getElementById("logoSVG")
 
+svg.addEventListener("mousedown",function(e){
 
-
-
-circleUpload.addEventListener("change", function(){
-
-const file = this.files[0]
-if(!file) return
-
-const reader = new FileReader()
-
-reader.onload = function(e){
-
-circleImage.setAttribute("href", e.target.result)
-
-circleImage.setAttribute("x", circleX)
-circleImage.setAttribute("y", circleY)
-
-circleImage.setAttribute("width", 240 * circleScale)
-circleImage.setAttribute("height", 240 * circleScale)
-
-}
-
-reader.readAsDataURL(file)
-
-})
-
-
-
-
-
-const circleSVG = document.getElementById("circleImageSVG")
-
-circleSVG.addEventListener("wheel",function(e){
-
-e.preventDefault()
-
-let delta = e.deltaY>0 ? -0.05 : 0.05
-
-circleScale += delta
-
-if(circleScale<0.2) circleScale=0.2
-if(circleScale>5) circleScale=5
-
-updateCircleImage()
-
-})
-
-circleSVG.addEventListener("mousedown",function(e){
-
-dragging=true
-startX=e.clientX-circleX
-startY=e.clientY-circleY
-
-circleSVG.style.cursor="grabbing"
+dragging = true
+startX = e.clientX
+startY = e.clientY
 
 })
 
 window.addEventListener("mouseup",function(){
-
-dragging=false
-circleSVG.style.cursor="grab"
-
+dragging = false
 })
 
 window.addEventListener("mousemove",function(e){
 
 if(!dragging) return
 
-circleX=e.clientX-startX
-circleY=e.clientY-startY
+let dx = e.clientX - startX
+let dy = e.clientY - startY
 
-updateCircleImage()
+imgX += dx
+imgY += dy
 
-})
+centerImage.setAttribute("x",imgX)
+centerImage.setAttribute("y",imgY)
 
-
-
-
-function updateCircleImage(){
-
-circleImage.setAttribute("x", circleX)
-circleImage.setAttribute("y", circleY)
-
-circleImage.setAttribute("width", 240 * circleScale)
-circleImage.setAttribute("height", 240 * circleScale)
-
-}
-
-
-
-
-
-circleSizeSlider.addEventListener("input",function(){
-
-let r=this.value
-
-circleClipShape.setAttribute("r",r)
+startX = e.clientX
+startY = e.clientY
 
 })
 
+svg.addEventListener("wheel",function(e){
 
+e.preventDefault()
 
-document.getElementById("downloadCircle").onclick = downloadCirclePNG
-
-function downloadCirclePNG(){
-
-const svg = document.getElementById("circleImageSVG")
-
-const serializer = new XMLSerializer()
-const source = serializer.serializeToString(svg)
-
-const img = new Image()
-img.crossOrigin="anonymous"
-
-const canvas = document.createElement("canvas")
-
-canvas.width = 2048
-canvas.height = 2048
-
-const ctx = canvas.getContext("2d")
-
-img.onload = function(){
-
-ctx.beginPath()
-ctx.arc(1024,1024,1024,0,Math.PI*2)
-ctx.closePath()
-ctx.clip()
-
-ctx.drawImage(img,0,0,2048,2048)
-
-const link = document.createElement("a")
-link.download = "circle.png"
-link.href = canvas.toDataURL("image/png")
-
-link.click()
-
+if(e.deltaY < 0){
+imgSize *= 1.1
+}else{
+imgSize *= 0.9
 }
 
-img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source)
-
-}
-
-
-updateCircle()
-updateImageSize()
-updateBorder()
-updateFont()
-updateColor()
-bgColor.addEventListener("input",function(){
-
-document.getElementById("logoSVG").style.background = bgColor.value
+centerImage.setAttribute("width",imgSize)
+centerImage.setAttribute("height",imgSize)
 
 })
 
