@@ -71,6 +71,25 @@ width: 80%;
 }
 
 
+#dropBox{
+width: 80%;
+height:50PX;
+border:2px dashed #999;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:20px;
+font-family:sans-serif;
+}
+
+canvas{
+width: 60%;
+height:30%;
+border:1px solid #ccc;
+cursor:crosshair;
+}
+
+
 </style>
 </head>
 <body>
@@ -279,12 +298,84 @@ Màu nền
 
 
 
+<div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
+
+<canvas id="canvas"></canvas>
+
+<p id="colorInfo"></p>
+
+
+
 
 </div>
 
 </div>
 
 <script>
+
+// tìm RBG 
+
+const dropBox = document.getElementById("dropBox")
+const canvas = document.getElementById("canvas")
+const ctx = canvas.getContext("2d")
+const colorInfo = document.getElementById("colorInfo")
+
+let img = new Image()
+
+// DÁN ẢNH
+document.addEventListener("paste",function(e){
+
+const items = e.clipboardData.items
+
+for(let item of items){
+
+if(item.type.indexOf("image") !== -1){
+
+const file = item.getAsFile()
+const reader = new FileReader()
+
+reader.onload = function(event){
+img.src = event.target.result
+}
+
+reader.readAsDataURL(file)
+
+}
+
+}
+
+})
+
+img.onload = function(){
+
+canvas.width = img.width
+canvas.height = img.height
+
+ctx.drawImage(img,0,0)
+
+}
+
+// CLICK LẤY MÀU
+canvas.addEventListener("click",function(e){
+
+const rect = canvas.getBoundingClientRect()
+
+const x = e.clientX - rect.left
+const y = e.clientY - rect.top
+
+const pixel = ctx.getImageData(x,y,1,1).data
+
+const r = pixel[0]
+const g = pixel[1]
+const b = pixel[2]
+
+const hex = "#" + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
+
+colorInfo.innerText = "RGB: "+r+", "+g+", "+b+" | HEX: "+hex
+
+})
+
+
 
 // ĐỔI HEX SANG RBG
 
