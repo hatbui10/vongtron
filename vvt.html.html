@@ -33,6 +33,7 @@ button{
 padding:8px 14px;
 font-size:16px;
 cursor:pointer;
+margin:10px;
 }
 
 </style>
@@ -64,6 +65,30 @@ Vị trí chữ dưới
 </div>
 
 <div class="control">
+Khoảng cách chữ trên
+<br>
+<input type="range" id="topGap" min="-30" max="40" value="10">
+</div>
+
+<div class="control">
+Khoảng cách chữ dưới
+<br>
+<input type="range" id="bottomGap" min="-30" max="40" value="10">
+</div>
+
+<div class="control">
+Kích thước chữ
+<br>
+<input type="range" id="fontSize" min="12" max="50" value="22">
+</div>
+
+<div class="control">
+Khoảng cách chữ
+<br>
+<input type="range" id="letterSpacing" min="0" max="10" value="4">
+</div>
+
+<div class="control">
 Kích thước khung ảnh
 <br>
 <input type="range" id="imgSize" min="30" max="120" value="60">
@@ -75,13 +100,27 @@ Kích thước khung ảnh
 <input type="range" id="borderSize" min="1" max="10" value="3">
 </div>
 
+<div class="control">
+Màu chữ
 <br>
+<input type="color" id="textColor" value="#000000">
+</div>
+
+<div class="control">
+Màu viền
+<br>
+<input type="color" id="borderColor" value="#000000">
+</div>
 
 <input type="file" id="imageUpload">
 
+<br>
+
+<button id="downloadBtn">Tải PNG</button>
+
 <br><br>
 
-<svg viewBox="0 0 300 300">
+<svg id="logoSVG" viewBox="0 0 300 300">
 
 <defs>
 
@@ -94,7 +133,6 @@ Kích thước khung ảnh
 
 </defs>
 
-<!-- ảnh giữa -->
 <image id="centerImage"
 x="90"
 y="90"
@@ -105,8 +143,6 @@ preserveAspectRatio="xMidYMid slice"
 href="">
 </image>
 
-
-<!-- viền tròn -->
 <circle id="imageBorder"
 cx="150"
 cy="150"
@@ -115,8 +151,7 @@ fill="none"
 stroke="black"
 stroke-width="3"></circle>
 
-<!-- chữ trên -->
-<text font-size="22" font-weight="bold" letter-spacing="4">
+<text id="topTextWrap" font-size="22" font-weight="bold" letter-spacing="4">
 <textPath id="topText"
 href="#topCircle"
 startOffset="50%"
@@ -125,8 +160,7 @@ CHỮ PHÍA TRÊN
 </textPath>
 </text>
 
-<!-- chữ dưới -->
-<text font-size="22" font-weight="bold" letter-spacing="4">
+<text id="bottomTextWrap" font-size="22" font-weight="bold" letter-spacing="4">
 <textPath id="bottomText"
 href="#bottomCircle"
 startOffset="50%"
@@ -145,12 +179,24 @@ const bottomInput=document.getElementById("bottomInput")
 const topText=document.getElementById("topText")
 const bottomText=document.getElementById("bottomText")
 
+const topWrap=document.getElementById("topTextWrap")
+const bottomWrap=document.getElementById("bottomTextWrap")
+
 const radiusSlider=document.getElementById("radius")
 const topOffsetSlider=document.getElementById("topOffset")
 const bottomOffsetSlider=document.getElementById("bottomOffset")
 
+const topGapSlider=document.getElementById("topGap")
+const bottomGapSlider=document.getElementById("bottomGap")
+
+const fontSizeSlider=document.getElementById("fontSize")
+const letterSpacingSlider=document.getElementById("letterSpacing")
+
 const imgSizeSlider=document.getElementById("imgSize")
 const borderSizeSlider=document.getElementById("borderSize")
+
+const textColor=document.getElementById("textColor")
+const borderColor=document.getElementById("borderColor")
 
 const topCircle=document.getElementById("topCircle")
 const bottomCircle=document.getElementById("bottomCircle")
@@ -163,16 +209,18 @@ const imageBorder=document.getElementById("imageBorder")
 
 function updateCircle(){
 
-let r=radiusSlider.value
+let r=parseInt(radiusSlider.value)
+let topGap=parseInt(topGapSlider.value)
+let bottomGap=parseInt(bottomGapSlider.value)
 
 topCircle.setAttribute(
 "d",
-`M150,150 m-${r},0 a${r},${r} 0 1,1 ${r*2},0`
+`M150,150 m-${r+topGap},0 a${r+topGap},${r+topGap} 0 1,1 ${(r+topGap)*2},0`
 )
 
 bottomCircle.setAttribute(
 "d",
-`M150,150 m-${r},0 a${r},${r} 0 1,0 ${r*2},0`
+`M150,150 m-${r+bottomGap},0 a${r+bottomGap},${r+bottomGap} 0 1,0 ${(r+bottomGap)*2},0`
 )
 
 }
@@ -182,7 +230,6 @@ function updateImageSize(){
 let size=imgSizeSlider.value
 
 clipCircle.setAttribute("r",size)
-
 imageBorder.setAttribute("r",size)
 
 centerImage.setAttribute("x",150-size)
@@ -199,49 +246,95 @@ imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
 
 }
 
-topInput.addEventListener("input",()=>{
-topText.textContent=topInput.value
-})
+function updateFont(){
 
-bottomInput.addEventListener("input",()=>{
-bottomText.textContent=bottomInput.value
-})
+let size=fontSizeSlider.value
+let space=letterSpacingSlider.value
 
-topOffsetSlider.addEventListener("input",()=>{
-topText.setAttribute("startOffset",topOffsetSlider.value+"%")
-})
+topWrap.setAttribute("font-size",size)
+bottomWrap.setAttribute("font-size",size)
 
-bottomOffsetSlider.addEventListener("input",()=>{
-bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%")
-})
+topWrap.setAttribute("letter-spacing",space)
+bottomWrap.setAttribute("letter-spacing",space)
+
+}
+
+function updateColor(){
+
+topWrap.setAttribute("fill",textColor.value)
+bottomWrap.setAttribute("fill",textColor.value)
+
+imageBorder.setAttribute("stroke",borderColor.value)
+
+}
+
+topInput.addEventListener("input",()=>topText.textContent=topInput.value)
+bottomInput.addEventListener("input",()=>bottomText.textContent=bottomInput.value)
+
+topOffsetSlider.addEventListener("input",()=>topText.setAttribute("startOffset",topOffsetSlider.value+"%"))
+bottomOffsetSlider.addEventListener("input",()=>bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%"))
 
 radiusSlider.addEventListener("input",updateCircle)
+topGapSlider.addEventListener("input",updateCircle)
+bottomGapSlider.addEventListener("input",updateCircle)
 
 imgSizeSlider.addEventListener("input",updateImageSize)
-
 borderSizeSlider.addEventListener("input",updateBorder)
+
+fontSizeSlider.addEventListener("input",updateFont)
+letterSpacingSlider.addEventListener("input",updateFont)
+
+textColor.addEventListener("input",updateColor)
+borderColor.addEventListener("input",updateColor)
 
 imageUpload.addEventListener("change",function(){
 
 const file=this.files[0]
-
 if(!file) return
 
 const reader=new FileReader()
 
 reader.onload=function(e){
-
 centerImage.setAttribute("href",e.target.result)
-
 }
 
 reader.readAsDataURL(file)
 
 })
 
+document.getElementById("downloadBtn").onclick=function(){
+
+let svg=document.getElementById("logoSVG")
+let data=new XMLSerializer().serializeToString(svg)
+
+let canvas=document.createElement("canvas")
+canvas.width=800
+canvas.height=800
+
+let ctx=canvas.getContext("2d")
+
+let img=new Image()
+
+img.onload=function(){
+
+ctx.drawImage(img,0,0)
+
+let a=document.createElement("a")
+a.download="logo.png"
+a.href=canvas.toDataURL()
+a.click()
+
+}
+
+img.src="data:image/svg+xml;base64,"+btoa(data)
+
+}
+
 updateCircle()
 updateImageSize()
 updateBorder()
+updateFont()
+updateColor()
 
 </script>
 
