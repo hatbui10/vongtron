@@ -13,14 +13,12 @@ margin:0;
 padding:20px;
 }
 
-/* layout */
 .container{
 display:flex;
 gap:20px;
 align-items:flex-start;
 }
 
-/* tool box */
 .tools{
 width:260px;
 background:white;
@@ -29,17 +27,13 @@ border-radius:10px;
 box-shadow:0 0 5px rgba(0,0,0,0.2);
 }
 
-.tools h3{
-margin-top:0;
-}
-
 .control{
 margin-bottom:12px;
 font-size:14px;
 }
 
 input{
-width:80%;
+width:90%;
 padding:6px;
 margin-top:4px;
 }
@@ -70,7 +64,6 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- TOOLBOX TRÁI -->
 <div class="tools">
 
 <h3>Chỉnh chữ</h3>
@@ -116,14 +109,17 @@ Kích thước chữ
 </div>
 
 <div class="control">
-Khoảng cách chữ
-<input type="range" id="letterSpacing" min="0" max="10" value="4">
+Khoảng cách ký tự chữ trên
+<input type="range" id="topSpacing" min="0" max="15" value="4">
+</div>
+
+<div class="control">
+Khoảng cách ký tự chữ dưới
+<input type="range" id="bottomSpacing" min="0" max="15" value="4">
 </div>
 
 </div>
 
-
-<!-- PREVIEW -->
 <div class="preview">
 
 <svg id="logoSVG" viewBox="0 0 300 300">
@@ -157,7 +153,7 @@ fill="none"
 stroke="black"
 stroke-width="3"></circle>
 
-<text id="topTextWrap" font-size="22" font-weight="bold" letter-spacing="4">
+<text id="topTextWrap" font-size="22" font-weight="bold">
 <textPath id="topText"
 href="#topCircle"
 startOffset="50%"
@@ -166,7 +162,7 @@ CHỮ PHÍA TRÊN
 </textPath>
 </text>
 
-<text id="bottomTextWrap" font-size="22" font-weight="bold" letter-spacing="4">
+<text id="bottomTextWrap" font-size="22" font-weight="bold">
 <textPath id="bottomText"
 href="#bottomCircle"
 startOffset="50%"
@@ -182,8 +178,6 @@ CHỮ PHÍA DƯỚI
 
 </div>
 
-
-<!-- TOOLBOX PHẢI -->
 <div class="tools">
 
 <h3>Chỉnh ảnh</h3>
@@ -217,10 +211,7 @@ Màu viền
 
 </div>
 
-
 <script>
-
-/* JS GIỮ NGUYÊN CỦA BẠN */
 
 const topInput=document.getElementById("topInput")
 const bottomInput=document.getElementById("bottomInput")
@@ -239,7 +230,9 @@ const topGapSlider=document.getElementById("topGap")
 const bottomGapSlider=document.getElementById("bottomGap")
 
 const fontSizeSlider=document.getElementById("fontSize")
-const letterSpacingSlider=document.getElementById("letterSpacing")
+
+const topSpacingSlider=document.getElementById("topSpacing")
+const bottomSpacingSlider=document.getElementById("bottomSpacing")
 
 const imgSizeSlider=document.getElementById("imgSize")
 const borderSizeSlider=document.getElementById("borderSize")
@@ -274,6 +267,18 @@ bottomCircle.setAttribute(
 
 }
 
+function updateFont(){
+
+let size=fontSizeSlider.value
+
+topWrap.setAttribute("font-size",size)
+bottomWrap.setAttribute("font-size",size)
+
+topWrap.setAttribute("letter-spacing",topSpacingSlider.value)
+bottomWrap.setAttribute("letter-spacing",bottomSpacingSlider.value)
+
+}
+
 function updateImageSize(){
 
 let size=imgSizeSlider.value
@@ -291,19 +296,6 @@ centerImage.setAttribute("height",size*2)
 
 function updateBorder(){
 imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
-}
-
-function updateFont(){
-
-let size=fontSizeSlider.value
-let space=letterSpacingSlider.value
-
-topWrap.setAttribute("font-size",size)
-bottomWrap.setAttribute("font-size",size)
-
-topWrap.setAttribute("letter-spacing",space)
-bottomWrap.setAttribute("letter-spacing",space)
-
 }
 
 function updateColor(){
@@ -325,11 +317,12 @@ radiusSlider.addEventListener("input",updateCircle)
 topGapSlider.addEventListener("input",updateCircle)
 bottomGapSlider.addEventListener("input",updateCircle)
 
+fontSizeSlider.addEventListener("input",updateFont)
+topSpacingSlider.addEventListener("input",updateFont)
+bottomSpacingSlider.addEventListener("input",updateFont)
+
 imgSizeSlider.addEventListener("input",updateImageSize)
 borderSizeSlider.addEventListener("input",updateBorder)
-
-fontSizeSlider.addEventListener("input",updateFont)
-letterSpacingSlider.addEventListener("input",updateFont)
 
 textColor.addEventListener("input",updateColor)
 borderColor.addEventListener("input",updateColor)
@@ -360,8 +353,7 @@ canvas.height=800
 
 let ctx=canvas.getContext("2d")
 
-// vẽ nền màu giống giao diện
-ctx.fillStyle = "#e6d39c"
+ctx.fillStyle="#e6d39c"
 ctx.fillRect(0,0,canvas.width,canvas.height)
 
 let img=new Image()
@@ -377,7 +369,7 @@ a.click()
 
 }
 
-img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(data)
+img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 
 }
 
