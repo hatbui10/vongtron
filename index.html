@@ -65,6 +65,11 @@ user-select:none;
 }
 
 
+#hexInput{
+margin-bottom:20px;
+width: 80%;
+}
+
 
 </style>
 </head>
@@ -249,6 +254,12 @@ Kích thước khung ảnh
 <input type="range" id="borderSize" min="1" max="10" value="3">
 </div>
 
+
+HEX:
+<input type="text" id="hexInput">
+
+<br>
+
 <div class="control">
 Màu chữ
 <input type="color" id="textColor" value="#000000">
@@ -266,11 +277,42 @@ Màu nền
 
 
 
+
+
+
 </div>
 
 </div>
 
 <script>
+
+// ĐỔI HEX SANG RBG
+
+const textColor = document.getElementById("textColor")
+const borderColor = document.getElementById("borderColor")
+const bgColor = document.getElementById("bgColor")
+const hexInput = document.getElementById("hexInput")
+
+let currentPicker = null
+
+function setCurrent(picker){
+currentPicker = picker
+hexInput.value = picker.value
+}
+
+textColor.addEventListener("input",()=> setCurrent(textColor))
+borderColor.addEventListener("input",()=> setCurrent(borderColor))
+bgColor.addEventListener("input",()=> setCurrent(bgColor))
+
+hexInput.addEventListener("input",function(){
+
+if(currentPicker && hexInput.value.length == 7){
+currentPicker.value = hexInput.value
+}
+
+})
+
+
 
 // ===============================
 // LẤY CÁC INPUT CHỈNH CHỮ
@@ -316,8 +358,6 @@ const borderSizeSlider=document.getElementById("borderSize")
 // MÀU CHỮ + MÀU VIỀN
 // ===============================
 
-const textColor=document.getElementById("textColor")
-const borderColor=document.getElementById("borderColor")
 
 // ===============================
 // PATH CHỮ TRÊN VÀ CHỮ DƯỚI
@@ -344,7 +384,7 @@ const imageBorder=document.getElementById("imageBorder")
 // MÀU NỀN LOGO
 // ===============================
 
-const bgColor = document.getElementById("bgColor")
+
 
 // ===============================
 // BIẾN CHO ZOOM + KÉO ẢNH KHUNG LOGO
