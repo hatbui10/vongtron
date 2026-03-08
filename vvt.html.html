@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Logo vòng tròn</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4e2a3;
+text-align:center;
+padding:20px;
+}
+
+input{
+width:320px;
+padding:8px;
+font-size:16px;
+margin:6px;
+}
+
+.control{
+margin:10px;
+}
+
+svg{
+width:420px;
+height:420px;
+}
+
+button{
+padding:8px 14px;
+font-size:16px;
+cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<h3>Chữ phía trên</h3>
+<input id="topInput" placeholder="Nhập chữ phía trên">
+
+<h3>Chữ phía dưới</h3>
+<input id="bottomInput" placeholder="Nhập chữ phía dưới">
+
+<div class="control">
+Bán kính vòng tròn
+<br>
+<input type="range" id="radius" min="60" max="140" value="120">
+</div>
+
+<div class="control">
+Vị trí chữ trên
+<br>
+<input type="range" id="topOffset" min="0" max="100" value="50">
+</div>
+
+<div class="control">
+Vị trí chữ dưới
+<br>
+<input type="range" id="bottomOffset" min="0" max="100" value="50">
+</div>
+
+<div class="control">
+Kích thước khung ảnh
+<br>
+<input type="range" id="imgSize" min="30" max="120" value="60">
+</div>
+
+<div class="control">
+Độ dày viền tròn
+<br>
+<input type="range" id="borderSize" min="1" max="10" value="3">
+</div>
+
+<br>
+
+<input type="file" id="imageUpload">
+
+<br><br>
+
+<svg viewBox="0 0 300 300">
+
+<defs>
+
+<path id="topCircle"></path>
+<path id="bottomCircle"></path>
+
+<clipPath id="imageClip">
+<circle id="clipCircle" cx="150" cy="150" r="60"></circle>
+</clipPath>
+
+</defs>
+
+<!-- ảnh giữa -->
+<image id="centerImage"
+x="90"
+y="90"
+width="120"
+height="120"
+clip-path="url(#imageClip)"
+preserveAspectRatio="xMidYMid slice"
+href="">
+</image>
+
+
+<!-- viền tròn -->
+<circle id="imageBorder"
+cx="150"
+cy="150"
+r="60"
+fill="none"
+stroke="black"
+stroke-width="3"></circle>
+
+<!-- chữ trên -->
+<text font-size="22" font-weight="bold" letter-spacing="4">
+<textPath id="topText"
+href="#topCircle"
+startOffset="50%"
+text-anchor="middle">
+CHỮ PHÍA TRÊN
+</textPath>
+</text>
+
+<!-- chữ dưới -->
+<text font-size="22" font-weight="bold" letter-spacing="4">
+<textPath id="bottomText"
+href="#bottomCircle"
+startOffset="50%"
+text-anchor="middle">
+CHỮ PHÍA DƯỚI
+</textPath>
+</text>
+
+</svg>
+
+<script>
+
+const topInput=document.getElementById("topInput")
+const bottomInput=document.getElementById("bottomInput")
+
+const topText=document.getElementById("topText")
+const bottomText=document.getElementById("bottomText")
+
+const radiusSlider=document.getElementById("radius")
+const topOffsetSlider=document.getElementById("topOffset")
+const bottomOffsetSlider=document.getElementById("bottomOffset")
+
+const imgSizeSlider=document.getElementById("imgSize")
+const borderSizeSlider=document.getElementById("borderSize")
+
+const topCircle=document.getElementById("topCircle")
+const bottomCircle=document.getElementById("bottomCircle")
+
+const imageUpload=document.getElementById("imageUpload")
+const centerImage=document.getElementById("centerImage")
+
+const clipCircle=document.getElementById("clipCircle")
+const imageBorder=document.getElementById("imageBorder")
+
+function updateCircle(){
+
+let r=radiusSlider.value
+
+topCircle.setAttribute(
+"d",
+`M150,150 m-${r},0 a${r},${r} 0 1,1 ${r*2},0`
+)
+
+bottomCircle.setAttribute(
+"d",
+`M150,150 m-${r},0 a${r},${r} 0 1,0 ${r*2},0`
+)
+
+}
+
+function updateImageSize(){
+
+let size=imgSizeSlider.value
+
+clipCircle.setAttribute("r",size)
+
+imageBorder.setAttribute("r",size)
+
+centerImage.setAttribute("x",150-size)
+centerImage.setAttribute("y",150-size)
+
+centerImage.setAttribute("width",size*2)
+centerImage.setAttribute("height",size*2)
+
+}
+
+function updateBorder(){
+
+imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
+
+}
+
+topInput.addEventListener("input",()=>{
+topText.textContent=topInput.value
+})
+
+bottomInput.addEventListener("input",()=>{
+bottomText.textContent=bottomInput.value
+})
+
+topOffsetSlider.addEventListener("input",()=>{
+topText.setAttribute("startOffset",topOffsetSlider.value+"%")
+})
+
+bottomOffsetSlider.addEventListener("input",()=>{
+bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%")
+})
+
+radiusSlider.addEventListener("input",updateCircle)
+
+imgSizeSlider.addEventListener("input",updateImageSize)
+
+borderSizeSlider.addEventListener("input",updateBorder)
+
+imageUpload.addEventListener("change",function(){
+
+const file=this.files[0]
+
+if(!file) return
+
+const reader=new FileReader()
+
+reader.onload=function(e){
+
+centerImage.setAttribute("href",e.target.result)
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+updateCircle()
+updateImageSize()
+updateBorder()
+
+</script>
+
+</body>
+</html>
