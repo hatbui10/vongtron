@@ -360,6 +360,10 @@ canvas.height=800
 
 let ctx=canvas.getContext("2d")
 
+// vẽ nền màu giống giao diện
+ctx.fillStyle = "#e6d39c"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
 let img=new Image()
 
 img.onload=function(){
@@ -376,7 +380,6 @@ a.click()
 img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(data)
 
 }
-
 
 updateCircle()
 updateImageSize()
