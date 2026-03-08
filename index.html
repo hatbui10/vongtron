@@ -272,6 +272,10 @@ Màu nền
 
 <script>
 
+// ===============================
+// LẤY CÁC INPUT CHỈNH CHỮ
+// ===============================
+
 const topInput=document.getElementById("topInput")
 const bottomInput=document.getElementById("bottomInput")
 
@@ -281,6 +285,10 @@ const bottomText=document.getElementById("bottomText")
 const topWrap=document.getElementById("topTextWrap")
 const bottomWrap=document.getElementById("bottomTextWrap")
 
+// ===============================
+// SLIDER ĐIỀU CHỈNH HÌNH TRÒN CHỮ
+// ===============================
+
 const radiusSlider=document.getElementById("radius")
 const topOffsetSlider=document.getElementById("topOffset")
 const bottomOffsetSlider=document.getElementById("bottomOffset")
@@ -288,28 +296,59 @@ const bottomOffsetSlider=document.getElementById("bottomOffset")
 const topGapSlider=document.getElementById("topGap")
 const bottomGapSlider=document.getElementById("bottomGap")
 
+// ===============================
+// SLIDER CHỈNH FONT
+// ===============================
+
 const fontSizeSlider=document.getElementById("fontSize")
 
 const topSpacingSlider=document.getElementById("topSpacing")
 const bottomSpacingSlider=document.getElementById("bottomSpacing")
 
+// ===============================
+// SLIDER CHỈNH KHUNG ẢNH
+// ===============================
+
 const imgSizeSlider=document.getElementById("imgSize")
 const borderSizeSlider=document.getElementById("borderSize")
+
+// ===============================
+// MÀU CHỮ + MÀU VIỀN
+// ===============================
 
 const textColor=document.getElementById("textColor")
 const borderColor=document.getElementById("borderColor")
 
+// ===============================
+// PATH CHỮ TRÊN VÀ CHỮ DƯỚI
+// ===============================
+
 const topCircle=document.getElementById("topCircle")
 const bottomCircle=document.getElementById("bottomCircle")
+
+// ===============================
+// ẢNH LOGO TRUNG TÂM
+// ===============================
 
 const imageUpload=document.getElementById("imageUpload")
 const centerImage=document.getElementById("centerImage")
 
+// ===============================
+// KHUNG CẮT ẢNH TRÒN
+// ===============================
+
 const clipCircle=document.getElementById("clipCircle")
 const imageBorder=document.getElementById("imageBorder")
+
+// ===============================
+// MÀU NỀN LOGO
+// ===============================
+
 const bgColor = document.getElementById("bgColor")
 
-// ===== BIẾN CHO ZOOM + KÉO ẢNH KHUNG LOGO =====
+// ===============================
+// BIẾN CHO ZOOM + KÉO ẢNH KHUNG LOGO
+// ===============================
 
 let logoScale = 1
 let logoX = 90
@@ -319,6 +358,10 @@ let logoDragging = false
 let logoStartX
 let logoStartY
 
+
+// ===============================
+// TẠO ĐƯỜNG TRÒN CHO CHỮ TRÊN + DƯỚI
+// ===============================
 
 function updateCircle(){
 
@@ -338,6 +381,11 @@ bottomCircle.setAttribute(
 
 }
 
+
+// ===============================
+// CẬP NHẬT FONT SIZE + KHOẢNG CÁCH CHỮ
+// ===============================
+
 function updateFont(){
 
 let size=fontSizeSlider.value
@@ -349,6 +397,11 @@ topWrap.setAttribute("letter-spacing",topSpacingSlider.value)
 bottomWrap.setAttribute("letter-spacing",bottomSpacingSlider.value)
 
 }
+
+
+// ===============================
+// THAY ĐỔI KÍCH THƯỚC KHUNG ẢNH TRÒN
+// ===============================
 
 function updateImageSize(){
 
@@ -366,7 +419,9 @@ centerImage.setAttribute("height",size*2)
 }
 
 
-// ===== CẬP NHẬT ẢNH LOGO KHI ZOOM HOẶC KÉO =====
+// ===============================
+// CẬP NHẬT ẢNH LOGO KHI ZOOM / KÉO
+// ===============================
 
 function updateLogoImage(){
 
@@ -381,10 +436,18 @@ centerImage.setAttribute("height",size*2*logoScale)
 }
 
 
+// ===============================
+// ĐỘ DÀY VIỀN ẢNH
+// ===============================
 
 function updateBorder(){
 imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
 }
+
+
+// ===============================
+// ĐỔI MÀU CHỮ + MÀU VIỀN
+// ===============================
 
 function updateColor(){
 
@@ -395,11 +458,26 @@ imageBorder.setAttribute("stroke",borderColor.value)
 
 }
 
+
+// ===============================
+// SỰ KIỆN NHẬP CHỮ
+// ===============================
+
 topInput.addEventListener("input",()=>topText.textContent=topInput.value)
 bottomInput.addEventListener("input",()=>bottomText.textContent=bottomInput.value)
 
+
+// ===============================
+// THAY ĐỔI VỊ TRÍ CHỮ TRÊN / DƯỚI
+// ===============================
+
 topOffsetSlider.addEventListener("input",()=>topText.setAttribute("startOffset",topOffsetSlider.value+"%"))
 bottomOffsetSlider.addEventListener("input",()=>bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%"))
+
+
+// ===============================
+// SỰ KIỆN SLIDER
+// ===============================
 
 radiusSlider.addEventListener("input",updateCircle)
 topGapSlider.addEventListener("input",updateCircle)
@@ -415,16 +493,17 @@ borderSizeSlider.addEventListener("input",updateBorder)
 textColor.addEventListener("input",updateColor)
 borderColor.addEventListener("input",updateColor)
 
+
+// ===============================
+// UPLOAD ẢNH LOGO TRUNG TÂM
+// ===============================
+
 imageUpload.addEventListener("change",function(){
 
 const file=this.files[0]
 if(!file) return
 
 const reader=new FileReader()
-
-
-
-
 
 reader.onload=function(e){
 
@@ -438,12 +517,14 @@ updateLogoImage()
 
 }
 
-
-
-
 reader.readAsDataURL(file)
 
 })
+
+
+// ===============================
+// XUẤT PNG LOGO
+// ===============================
 
 document.getElementById("downloadBtn").onclick=function(){
 
@@ -458,7 +539,6 @@ let ctx=canvas.getContext("2d")
 
 ctx.fillStyle = bgColor.value
 ctx.fillRect(0,0,canvas.width,canvas.height)
-
 
 let img=new Image()
 
@@ -478,12 +558,9 @@ img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 }
 
 
-
-
-
-
-
+// ===============================
 // KHUNG ẢNH BÊN DƯỚI
+// ===============================
 
 const circleUpload = document.getElementById("circleUpload")
 const circleImage = document.getElementById("circleImage")
@@ -498,8 +575,9 @@ let dragging = false
 let startX,startY
 
 
-
-
+// ===============================
+// UPLOAD ẢNH KHUNG DƯỚI
+// ===============================
 
 circleUpload.addEventListener("change", function(){
 
@@ -525,8 +603,9 @@ reader.readAsDataURL(file)
 })
 
 
-
-
+// ===============================
+// ZOOM + KÉO ẢNH KHUNG DƯỚI
+// ===============================
 
 const circleSVG = document.getElementById("circleImageSVG")
 
@@ -574,7 +653,9 @@ updateCircleImage()
 })
 
 
-
+// ===============================
+// CẬP NHẬT ẢNH KHUNG DƯỚI
+// ===============================
 
 function updateCircleImage(){
 
@@ -587,8 +668,9 @@ circleImage.setAttribute("height", 240 * circleScale)
 }
 
 
-
-
+// ===============================
+// SLIDER THAY ĐỔI BÁN KÍNH KHUNG DƯỚI
+// ===============================
 
 circleSizeSlider.addEventListener("input",function(){
 
@@ -599,6 +681,9 @@ circleClipShape.setAttribute("r",r)
 })
 
 
+// ===============================
+// XUẤT PNG ẢNH TRÒN KHUNG DƯỚI
+// ===============================
 
 document.getElementById("downloadCircle").onclick = downloadCirclePNG
 
@@ -641,24 +726,31 @@ img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source)
 }
 
 
+// ===============================
+// KHỞI TẠO BAN ĐẦU
+// ===============================
+
 updateCircle()
 updateImageSize()
 updateBorder()
 updateFont()
 updateColor()
+
+// đổi màu nền logo
+
 bgColor.addEventListener("input",function(){
 
 document.getElementById("logoSVG").style.background = bgColor.value
 
 })
 
-// =============================
+
+// ===============================
 // ZOOM + KÉO ẢNH KHUNG LOGO
-// =============================
+// ===============================
 
 const logoSVG = document.getElementById("logoSVG")
 
-// zoom bằng con lăn
 logoSVG.addEventListener("wheel",function(e){
 
 e.preventDefault()
@@ -674,7 +766,6 @@ updateLogoImage()
 
 })
 
-// bắt đầu kéo
 logoSVG.addEventListener("mousedown",function(e){
 
 logoDragging = true
@@ -686,7 +777,6 @@ logoSVG.style.cursor="grabbing"
 
 })
 
-// dừng kéo
 window.addEventListener("mouseup",function(){
 
 logoDragging = false
@@ -694,7 +784,6 @@ logoSVG.style.cursor="grab"
 
 })
 
-// kéo ảnh
 window.addEventListener("mousemove",function(e){
 
 if(!logoDragging) return
@@ -706,9 +795,6 @@ updateLogoImage()
 
 })
 
-
-
 </script>
-
 </body>
 </html>
