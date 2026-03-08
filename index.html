@@ -58,6 +58,14 @@ cursor:pointer;
 margin-top:10px;
 }
 
+
+#circleImageSVG{
+cursor:grab;
+user-select:none;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -175,6 +183,50 @@ CHỮ PHÍA DƯỚI
 
 <br>
 <button id="downloadBtn">Tải PNG</button>
+
+
+
+<hr style="margin:30px 0">
+
+<h3>Bo tròn ảnh riêng</h3>
+
+<svg id="circleImageSVG" viewBox="0 0 300 300" width="300">
+
+<defs>
+<clipPath id="circleClip">
+<circle id="circleClipShape" cx="150" cy="150" r="120"></circle>
+</clipPath>
+</defs>
+
+<image id="circleImage"
+x="30"
+y="30"
+width="240"
+height="240"
+clip-path="url(#circleClip)"
+preserveAspectRatio="xMidYMid slice"
+href="">
+</image>
+
+</svg>
+
+<br>
+
+<input type="file" id="circleUpload">
+
+<br>
+
+Kích thước vòng tròn
+
+<input type="range" id="circleSize" min="60" max="140" value="120">
+
+<br><br>
+
+<button id="downloadCircle">Tải ảnh tròn PNG</button>
+
+
+
+
 
 </div>
 
@@ -372,6 +424,164 @@ a.click()
 img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 
 }
+
+
+
+const circleUpload = document.getElementById("circleUpload")
+const circleImage = document.getElementById("circleImage")
+const circleSizeSlider = document.getElementById("circleSize")
+const circleClipShape = document.getElementById("circleClipShape")
+
+let circleScale = 1
+let circleX = 30
+let circleY = 30
+
+let dragging = false
+let startX,startY
+
+
+
+
+
+circleUpload.addEventListener("change", function(){
+
+const file = this.files[0]
+if(!file) return
+
+const reader = new FileReader()
+
+reader.onload = function(e){
+
+circleImage.setAttribute("href", e.target.result)
+
+circleImage.setAttribute("x", circleX)
+circleImage.setAttribute("y", circleY)
+
+circleImage.setAttribute("width", 240 * circleScale)
+circleImage.setAttribute("height", 240 * circleScale)
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+
+
+
+
+const circleSVG = document.getElementById("circleImageSVG")
+
+circleSVG.addEventListener("wheel",function(e){
+
+e.preventDefault()
+
+let delta = e.deltaY>0 ? -0.05 : 0.05
+
+circleScale += delta
+
+if(circleScale<0.2) circleScale=0.2
+if(circleScale>5) circleScale=5
+
+updateCircleImage()
+
+})
+
+circleSVG.addEventListener("mousedown",function(e){
+
+dragging=true
+startX=e.clientX-circleX
+startY=e.clientY-circleY
+
+circleSVG.style.cursor="grabbing"
+
+})
+
+window.addEventListener("mouseup",function(){
+
+dragging=false
+circleSVG.style.cursor="grab"
+
+})
+
+window.addEventListener("mousemove",function(e){
+
+if(!dragging) return
+
+circleX=e.clientX-startX
+circleY=e.clientY-startY
+
+updateCircleImage()
+
+})
+
+
+
+
+function updateCircleImage(){
+
+circleImage.setAttribute("x", circleX)
+circleImage.setAttribute("y", circleY)
+
+circleImage.setAttribute("width", 240 * circleScale)
+circleImage.setAttribute("height", 240 * circleScale)
+
+}
+
+
+
+
+
+circleSizeSlider.addEventListener("input",function(){
+
+let r=this.value
+
+circleClipShape.setAttribute("r",r)
+
+})
+
+
+
+document.getElementById("downloadCircle").onclick = downloadCirclePNG
+
+function downloadCirclePNG(){
+
+const svg = document.getElementById("circleImageSVG")
+
+const serializer = new XMLSerializer()
+const source = serializer.serializeToString(svg)
+
+const img = new Image()
+img.crossOrigin="anonymous"
+
+const canvas = document.createElement("canvas")
+
+canvas.width = 2048
+canvas.height = 2048
+
+const ctx = canvas.getContext("2d")
+
+img.onload = function(){
+
+ctx.beginPath()
+ctx.arc(1024,1024,1024,0,Math.PI*2)
+ctx.closePath()
+ctx.clip()
+
+ctx.drawImage(img,0,0,2048,2048)
+
+const link = document.createElement("a")
+link.download = "circle.png"
+link.href = canvas.toDataURL("image/png")
+
+link.click()
+
+}
+
+img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source)
+
+}
+
 
 updateCircle()
 updateImageSize()
