@@ -47,8 +47,8 @@ margin-top:4px;
 }
 
 svg{
-width:1000px;
-height:1000px;
+width:500px;
+height:500px;
 background:#f4e2a3;
 border-radius:10px;
 box-shadow:0 0 8px rgba(0,0,0,0.3);
@@ -206,7 +206,11 @@ display:none;
     <!-- PREVIEW -->
     <div class="preview">
 
-        <svg id="logoSVG" viewBox="0 0 300 300">
+        <svg id="logoSVG"
+        viewBox="0 0 300 300"
+        width="300"
+        height="300"
+        preserveAspectRatio="xMidYMid meet">
 
             <defs>
                 <path id="topCircle"></path>
@@ -251,12 +255,17 @@ display:none;
 
         <br>
         <button id="downloadBtn">Tải PNG</button>
+		<button id="downloadSVG1()">Download SVG 1</button>
 
         <hr style="margin:30px 0">
 
         <h3>Bo tròn ảnh riêng</h3>
 
-        <svg id="circleImageSVG" viewBox="0 0 300 300" width="300">
+        <svg id="circleImageSVG"
+        viewBox="0 0 300 300"
+        width="300"
+        height="300"
+        preserveAspectRatio="xMidYMid meet">
 
             <defs>
                 <clipPath id="circleClip">
@@ -296,7 +305,8 @@ display:none;
 
         <br><br>
 
-        <button id="downloadCircle">Tải ảnh tròn PNG</button>
+        <button id="downloadCircle">Tải ảnh PNG</button>
+		<button id="downloadSVG2()">Download SVG 2</button>
 
     </div>
 
@@ -349,9 +359,9 @@ display:none;
 		
 		<div class="control">
 		Chiều rộng
-		<input type="number" id="frameWidth">
+		<input type="number" id="frameWidth" value="2048">
 		Chiều cao
-        <input type="number" id="frameHeight">
+        <input type="number" id="frameHeight" value="2048">
                    <select id="frameType">
                      <option value="rect">Rectangle</option>
                      <option value="square">Square</option>
@@ -459,7 +469,7 @@ ctx.strokeRect(20,20,width,width)
 
 if(type === "circle"){
 ctx.beginPath()
-ctx.arc(150,150,width/2,0,Math.PI*2)
+ctx.arc(canvas.width/2,canvas.height/2,width/2,0,Math.PI*2)
 ctx.stroke()
 }
 
@@ -805,14 +815,17 @@ reader.readAsDataURL(file)
 // XUẤT PNG LOGO
 // ===============================
 
+
+
 document.getElementById("downloadBtn").onclick=function(){
 
 let svg=document.getElementById("logoSVG")
 let data=new XMLSerializer().serializeToString(svg)
 
 let canvas=document.createElement("canvas")
-canvas.width= 4096
-canvas.height= 4096
+
+canvas.width = frameWidth.value
+canvas.height = frameHeight.value
 
 let ctx=canvas.getContext("2d")
 
@@ -823,7 +836,21 @@ let svgimg=new Image()
 
 svgimg.onload=function(){
 
-ctx.drawImage(img,0,0,300,300,0,0,canvas.width,canvas.height)
+let cx = canvas.width / 2
+let cy = canvas.height / 2
+let r = Math.min(canvas.width,canvas.height) / 2
+
+ctx.beginPath()
+ctx.arc(cx,cy,r,0,Math.PI*2)
+ctx.closePath()
+ctx.clip()
+
+let size = Math.min(canvas.width, canvas.height)
+
+let x = (canvas.width - size) / 2
+let y = (canvas.height - size) / 2
+
+ctx.drawImage(svgimg,0,0,300,300,x,y,size,size)
 
 let a=document.createElement("a")
 a.download="logo.png"
@@ -837,6 +864,42 @@ svgimg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 }
 
 
+// xuất SVG 
+document.getElementById("downloadSVG1").onclick=function(){
+
+let svg=document.getElementById("logoSVG")
+svg.setAttribute("xmlns","http://www.w3.org/2000/svg")
+
+let data=new XMLSerializer().serializeToString(svg)
+
+let blob=new Blob([data],{type:"image/svg+xml"})
+let url=URL.createObjectURL(blob)
+
+let a=document.createElement("a")
+a.href=url
+a.download="logo.svg"
+a.click()
+
+}
+
+document.getElementById("downloadSVG2").onclick=function(){
+
+let svg=document.getElementById("circleImageSVG")
+svg.setAttribute("xmlns","http://www.w3.org/2000/svg")
+
+let data=new XMLSerializer().serializeToString(svg)
+
+let blob=new Blob([data],{type:"image/svg+xml"})
+let url=URL.createObjectURL(blob)
+
+let a=document.createElement("a")
+a.href=url
+a.download="circle.svg"
+a.click()
+
+}
+
+
 // ===============================
 // KHUNG ẢNH BÊN DƯỚI
 // ===============================
@@ -844,13 +907,12 @@ svgimg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 const circleUpload = document.getElementById("circleUpload")
 const circleImage = document.getElementById("circleImage")
 const circleSizeSlider = document.getElementById("circleSize")
-const circleClipShape = document.getElementById("circleClipShape")
+const circleClipShape = document.getElementById("clipCircleShape")
 
 let circleScale = 1
 let circleX = 30
 let circleY = 30
 
-let dragging = false
 let startX,startY
 
 
@@ -904,7 +966,7 @@ updateCircleImage()
 })
 
 circleSVG.addEventListener("mousedown",function(e){
-
+let dragging = false
 dragging=true
 startX=e.clientX-circleX
 startY=e.clientY-circleY
@@ -978,19 +1040,28 @@ img.crossOrigin="anonymous"
 
 const canvas = document.createElement("canvas")
 
-canvas.width = 4096
-canvas.height = 4096
+canvas.width = frameWidth.value
+canvas.height = frameHeight.value
 
 const ctx = canvas.getContext("2d")
 
 img.onload = function(){
 
+let cx = canvas.width / 2
+let cy = canvas.height / 2
+let r = Math.min(canvas.width,canvas.height) / 2
+
 ctx.beginPath()
-ctx.arc(2048,2048,2048,0,Math.PI*2)
+ctx.arc(cx,cy,r,0,Math.PI*2)
 ctx.closePath()
 ctx.clip()
 
-ctx.drawImage(img,0,0,300,300,0,0,canvas.width,canvas.height)
+let size = Math.min(canvas.width, canvas.height)
+
+let x = (canvas.width - size) / 2
+let y = (canvas.height - size) / 2
+
+ctx.drawImage(img,0,0,300,300,x,y,size,size)
 
 const link = document.createElement("a")
 link.download = "circle.png"
