@@ -73,18 +73,19 @@ width: 80%;
 
 #dropBox{
 width: 80%;
-height:50PX;
+height:50px;
 border:2px dashed #999;
 display:flex;
 align-items:center;
 justify-content:center;
 margin-bottom:20px;
 font-family:sans-serif;
+display: none;
 }
 
 canvas{
 width: 60%;
-height:30%;
+height:50px;
 border:1px solid #ccc;
 cursor:crosshair;
 }
@@ -277,7 +278,17 @@ Kích thước khung ảnh
 HEX:
 <input type="text" id="hexInput">
 
-<br>
+
+
+
+<div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
+
+<canvas id="canvas"></canvas>
+
+<p id="colorInfo"></p>
+
+
+
 
 <div class="control">
 Màu chữ
@@ -298,11 +309,6 @@ Màu nền
 
 
 
-<div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
-
-<canvas id="canvas"></canvas>
-
-<p id="colorInfo"></p>
 
 
 
@@ -322,8 +328,8 @@ const colorInfo = document.getElementById("colorInfo")
 
 let img = new Image()
 
-// DÁN ẢNH
-document.addEventListener("paste",function(e){
+// CTRL + V
+document.addEventListener("paste", function(e){
 
 const items = e.clipboardData.items
 
@@ -353,15 +359,9 @@ canvas.height = img.height
 
 ctx.drawImage(img,0,0)
 
-}
-
-// CLICK LẤY MÀU
-canvas.addEventListener("click",function(e){
-
-const rect = canvas.getBoundingClientRect()
-
-const x = e.clientX - rect.left
-const y = e.clientY - rect.top
+// LẤY MÀU PIXEL Ở GIỮA ẢNH
+const x = Math.floor(canvas.width/2)
+const y = Math.floor(canvas.height/2)
 
 const pixel = ctx.getImageData(x,y,1,1).data
 
@@ -373,7 +373,9 @@ const hex = "#" + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
 
 colorInfo.innerText = "RGB: "+r+", "+g+", "+b+" | HEX: "+hex
 
-})
+}
+
+
 
 
 
