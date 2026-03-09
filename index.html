@@ -21,6 +21,9 @@ justify-content:center;
 flex-wrap:nowrap;
 }
 
+text{
+dominant-baseline: middle;
+}
 
 .tools{
 width:260px;
@@ -55,9 +58,11 @@ box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
 .preview{
-flex:1;
-text-align:center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
+
 
 button{
 padding:8px 14px;
@@ -207,15 +212,24 @@ display:none;
     <div class="preview">
 
         <svg id="logoSVG"
-        viewBox="0 0 300 300"
+        viewBox="-50 -50 400 400"
         width="300"
         height="300"
         preserveAspectRatio="xMidYMid meet">
 
             <defs>
-                <path id="topCircle"></path>
-                <path id="bottomCircle"></path>
+               <!-- cung chữ trên -->
+              <path id="topCircle"
+              d="M 40 150 A 120 120 0 0 1 260 150"
+              fill="none"/>
 
+              <path id="bottomCircle"
+             d="M 260 150 A 120 120 0 0 1 40 150"
+             fill="none"/>            
+              
+              
+              
+              
                 <clipPath id="imageClip">
                     <circle id="clipCircle" cx="150" cy="150" r="60"></circle>
                 </clipPath>
@@ -239,14 +253,16 @@ display:none;
                     stroke-width="3">
             </circle>
 
-            <text id="topTextWrap" font-size="22" font-weight="bold">
-                <textPath id="topText" href="#topCircle" startOffset="50%" text-anchor="middle">
+          
+                <text id="topTextWrap" font-size="22" font-weight="bold" text-anchor="middle"  dy="5">
+                      <textPath id="topText" href="#topCircle" startOffset="50%">
                     CHỮ PHÍA TRÊN
                 </textPath>
             </text>
 
-            <text id="bottomTextWrap" font-size="22" font-weight="bold">
-                <textPath id="bottomText" href="#bottomCircle" startOffset="50%" text-anchor="middle">
+            
+                <text id="bottomTextWrap" font-size="22" font-weight="bold" text-anchor="middle">
+                    <textPath id="bottomText" href="#bottomCircle" startOffset="50%">
                     CHỮ PHÍA DƯỚI
                 </textPath>
             </text>
@@ -255,14 +271,14 @@ display:none;
 
         <br>
         <button id="downloadBtn">Tải PNG</button>
-		<button id="downloadSVG1()">Download SVG 1</button>
+		<button id="downloadSVG1">Download SVG 1</button>
 
         <hr style="margin:30px 0">
 
         <h3>Bo tròn ảnh riêng</h3>
 
         <svg id="circleImageSVG"
-        viewBox="0 0 300 300"
+        viewBox="-50 -50 400 400"
         width="300"
         height="300"
         preserveAspectRatio="xMidYMid meet">
@@ -306,7 +322,7 @@ display:none;
         <br><br>
 
         <button id="downloadCircle">Tải ảnh PNG</button>
-		<button id="downloadSVG2()">Download SVG 2</button>
+		<button id="downloadSVG2">Download SVG 2</button>
 
     </div>
 
@@ -377,6 +393,13 @@ display:none;
 </div>
 <script>
 
+
+
+
+const frameWidth = document.getElementById("frameWidth")
+const frameHeight = document.getElementById("frameHeight")
+const frameType = document.getElementById("frameType")
+
 const applyFrame = document.getElementById("applyFrame")
 
 const clipCircleShape = document.getElementById("clipCircleShape")
@@ -388,14 +411,21 @@ let width = frameWidth.value
 let height = frameHeight.value
 let type = frameType.value
 
+
+
 if(type === "circle"){
 
 clipCircleShape.style.display="block"
 clipRectShape.style.display="none"
 
-clipCircleShape.setAttribute("r", width/2)
+clipCircleShape.setAttribute("r", 120)
+
+clipCircleShape.setAttribute("cx", 150)
+clipCircleShape.setAttribute("cy", 150)
 
 }
+
+
 
 if(type === "square"){
 
@@ -420,9 +450,6 @@ clipRectShape.setAttribute("height",height)
 }
 
 
-const frameWidth = document.getElementById("frameWidth")
-const frameHeight = document.getElementById("frameHeight")
-const frameType = document.getElementById("frameType")
 
 let width = frameWidth.value
 let height = frameHeight.value
@@ -839,7 +866,6 @@ svgimg.onload=function(){
 let cx = canvas.width / 2
 let cy = canvas.height / 2
 let r = Math.min(canvas.width,canvas.height) / 2
-
 ctx.beginPath()
 ctx.arc(cx,cy,r,0,Math.PI*2)
 ctx.closePath()
@@ -850,7 +876,15 @@ let size = Math.min(canvas.width, canvas.height)
 let x = (canvas.width - size) / 2
 let y = (canvas.height - size) / 2
 
-ctx.drawImage(svgimg,0,0,300,300,x,y,size,size)
+
+
+ctx.imageSmoothingEnabled = true
+ctx.imageSmoothingQuality = "high"
+
+drawAvatar(ctx, svgimg, x, y, size)
+
+
+
 
 let a=document.createElement("a")
 a.download="logo.png"
@@ -864,40 +898,6 @@ svgimg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
 }
 
 
-// xuất SVG 
-document.getElementById("downloadSVG1").onclick=function(){
-
-let svg=document.getElementById("logoSVG")
-svg.setAttribute("xmlns","http://www.w3.org/2000/svg")
-
-let data=new XMLSerializer().serializeToString(svg)
-
-let blob=new Blob([data],{type:"image/svg+xml"})
-let url=URL.createObjectURL(blob)
-
-let a=document.createElement("a")
-a.href=url
-a.download="logo.svg"
-a.click()
-
-}
-
-document.getElementById("downloadSVG2").onclick=function(){
-
-let svg=document.getElementById("circleImageSVG")
-svg.setAttribute("xmlns","http://www.w3.org/2000/svg")
-
-let data=new XMLSerializer().serializeToString(svg)
-
-let blob=new Blob([data],{type:"image/svg+xml"})
-let url=URL.createObjectURL(blob)
-
-let a=document.createElement("a")
-a.href=url
-a.download="circle.svg"
-a.click()
-
-}
 
 
 // ===============================
@@ -914,6 +914,7 @@ let circleX = 30
 let circleY = 30
 
 let startX,startY
+let circleDragging = false
 
 
 // ===============================
@@ -966,10 +967,11 @@ updateCircleImage()
 })
 
 circleSVG.addEventListener("mousedown",function(e){
-let dragging = false
-dragging=true
-startX=e.clientX-circleX
-startY=e.clientY-circleY
+
+circleDragging = true
+
+startX = e.clientX - circleX
+startY = e.clientY - circleY
 
 circleSVG.style.cursor="grabbing"
 
@@ -977,17 +979,18 @@ circleSVG.style.cursor="grabbing"
 
 window.addEventListener("mouseup",function(){
 
-dragging=false
+circleDragging = false
 circleSVG.style.cursor="grab"
 
 })
 
+
 window.addEventListener("mousemove",function(e){
 
-if(!dragging) return
+if(!circleDragging) return
 
-circleX=e.clientX-startX
-circleY=e.clientY-startY
+circleX = e.clientX - startX
+circleY = e.clientY - startY
 
 updateCircleImage()
 
@@ -1056,12 +1059,16 @@ ctx.arc(cx,cy,r,0,Math.PI*2)
 ctx.closePath()
 ctx.clip()
 
-let size = Math.min(canvas.width, canvas.height)
+let size = Math.min(canvas.width, canvas.height)*0.9
 
 let x = (canvas.width - size) / 2
 let y = (canvas.height - size) / 2
 
-ctx.drawImage(img,0,0,300,300,x,y,size,size)
+
+ctx.imageSmoothingEnabled = true
+ctx.imageSmoothingQuality = "high"
+
+drawAvatar(ctx, img, x, y, size)
 
 const link = document.createElement("a")
 link.download = "circle.png"
@@ -1146,6 +1153,60 @@ updateLogoImage()
 
 })
 
+
+
+
+
+
+
+function drawAvatar(ctx, svgimg, x, y, size) {
+
+  const tmp = document.createElement("canvas")
+  const tctx = tmp.getContext("2d")
+
+  tmp.width = 2048
+  tmp.height = 2048
+
+  tctx.drawImage(svgimg,0,0,tmp.width,tmp.height)
+
+  ctx.drawImage(tmp,0,0,tmp.width,tmp.height,x,y,size,size)
+
+  const img = ctx.getImageData(x,y,size,size)
+  const d = img.data
+  const w = img.width
+  const h = img.height
+
+  const out = new Uint8ClampedArray(d)
+
+  for (let y1 = 1; y1 < h-1; y1++){
+    for (let x1 = 1; x1 < w-1; x1++){
+
+      for (let c = 0; c < 3; c++){
+
+        let i = (y1*w + x1)*4 + c
+
+        let sum =
+          d[((y1-1)*w + x1)*4 + c] * -1 +
+          d[(y1*w + (x1-1))*4 + c] * -1 +
+          d[(y1*w + x1)*4 + c] * 5 +
+          d[(y1*w + (x1+1))*4 + c] * -1 +
+          d[((y1+1)*w + x1)*4 + c] * -1
+
+        out[i] = Math.min(255,Math.max(0,sum))
+      }
+    }
+  }
+
+  img.data.set(out)
+  ctx.putImageData(img,x,y)
+
+}
+
+
+
+
+
 </script>
 </body>
 </html>
+
